@@ -7,8 +7,10 @@ from sklearn.cluster import KMeans, SpectralClustering, AffinityPropagation
 from Bio.Cluster import kcluster, clustercentroids
 
 prefix = 'data/'
+outputprefix = 'processed_data/'
 path = prefix + '{}.csv'
-img_path = prefix + '{}.png'
+img_path = outputprefix + '{}.png'
+output_path = outputprefix + '{}.csv'
 
 def read():
     info = pd.read_csv(path.format('pt_info'), index_col=['ts_code'])
@@ -68,8 +70,8 @@ if __name__ == '__main__':
     info = info[['total_revenue', 'total_cogs', 'total_cur_assets', 'fix_assets_total',
                 'free_cashflow', 'bps', 'roe', 'ebt_yoy']]
     # info = info[['total_revenue', 'bps']]
-    info.to_csv(path.format('test'))
+    info.to_csv(output_path.format('test'))
 
     label = cluster(info)
-    label.to_csv(path.format('cluster'))
+    label.to_csv(output_path.format('cluster'))
     
