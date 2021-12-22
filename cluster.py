@@ -2,9 +2,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.cluster import KMeans, SpectralClustering, AffinityPropagation
-
+# from sklearn.cluster import KMeans, SpectralClustering, AffinityPropagation
 from Bio.Cluster import kcluster, clustercentroids
+import random
+random.seed(0)
+np.random.seed(0)
 
 prefix = 'data/'
 outputprefix = 'processed_data/'
@@ -29,7 +31,7 @@ def read():
     info.index = info.index.map(lambda x : x[0])
     return info
 
-def cluster(df: pd.DataFrame):
+def cluster_once(df: pd.DataFrame, max_size: int = 10):
     '聚类方法：kmeans+余弦相似度，每一类不超过10个样本'
     data = df.to_numpy()
     data = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
@@ -40,7 +42,7 @@ def cluster(df: pd.DataFrame):
 
     def cluster_recursion(x, id):
         nonlocal now, res
-        if len(x) > 10:
+        if len(x) > max_size:
             label, _, _ = kcluster(x, nclusters=2, dist='u', npass=100)
             order = np.argsort(label)
             x, id = x[order], id[order]
@@ -59,6 +61,12 @@ def cluster(df: pd.DataFrame):
     res = pd.DataFrame(res, index=df.index)
     return res
 
+def cluster_different_size(df: pd.DataFrame, sizes: list):
+    for size in sizes:
+        print('cluster with size %d' % size)
+        label = cluster_once(info, size)
+        label.to_csv(output_path.format('cluster' + str(size)))
+
 if __name__ == '__main__':
     info = read()
     '''
@@ -72,6 +80,5 @@ if __name__ == '__main__':
     # info = info[['total_revenue', 'bps']]
     info.to_csv(output_path.format('test'))
 
-    label = cluster(info)
-    label.to_csv(output_path.format('cluster'))
+    cluster_different_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])
     
