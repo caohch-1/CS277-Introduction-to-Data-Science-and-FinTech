@@ -7,6 +7,8 @@ prefix = 'data/'
 path = prefix + '{}.csv'
 
 '数据来源于tushare，https://www.tushare.pro/document/2，需先获取权限，设置秘钥'
+'代码和数据在https://github.com/Chocolita/SSLT'
+'秘钥已改变，请下载github的数据集，将from_csv设为True进行数据预处理'
 ts.set_token('90f542ce349ae3c72715530fdb411ddec58c505cd1bede27cfe43525')
 pro = ts.pro_api()
 
