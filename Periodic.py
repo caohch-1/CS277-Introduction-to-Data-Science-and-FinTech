@@ -152,44 +152,56 @@ def main():
                 #print(max_price)
             tag += 1
 
+
+
+
+        if abs(limit_max[5] - limit_max[6]) <= 3 and limit_max[5] != 0 and limit_max[6] != 0:
+            tup = [int(exampleData[i][1]), int((limit_max[5] + limit_max[6])/2)]
+            max_list.append(tup)
+        if abs(limit_min[5] - limit_min[6]) <= 3 and limit_min[5] != 0 and limit_min[6] != 0:
+            tup = [int(exampleData[i][1]), int((limit_min[5] + limit_min[6])/2)]
+            min_list.append(tup)
         limit_max.sort()
         limit_min.sort()
         # print(limit_max)
         # print(limit_min)
         tag_max = -5
         count = 0
-        for item in limit_max:
+        for k in range(len(limit_max)):
             if count >= 3 and tag_max != 0:
                 # print("found")
                 # print(limit_max)
                 #ts_code
-                tup = [exampleData[i][1], tag_max]
+                tup = [int(exampleData[i][1]), int((limit_max[k-1] + limit_max[k-2] + limit_max[k])/3)]
                 max_list.append(tup)
                 break
-            if abs(tag_max - item) >= 3:
-                tag_max = item
+            if abs(tag_max - limit_max[k]) >= 4:
+                tag_max = limit_max[k]
                 count = 1
-            elif abs(tag_max - item) < 3:
+            elif abs(tag_max - limit_max[k]) < 4:
                 count += 1
 
         tag_min = -5
         count = 0
-        for item in limit_min:
+        for k in range(len(limit_min)):
             if count >= 3 and tag_min != 0:
                 print("found")
                 print(limit_min)
                 # ts_code
-                tup = [exampleData[i][1], tag_min]
+                tup = [int(exampleData[i][1]), int((limit_min[k-1] + limit_min[k-2] + limit_min[k])/3)]
                 min_list.append(tup)
                 break
-            if abs(tag_min - item) >= 3:
-                tag_min = item
+            if abs(tag_min - limit_min[k]) >= 3:
+                tag_min = limit_min[k]
                 count = 1
-            elif abs(tag_min - item) < 3:
+            elif abs(tag_min - limit_min[k]) < 3:
                 count += 1
+
 
         # if i == 100:
         #     break
+    max_list=sorted(max_list,key=(lambda x:x[0]),reverse=False)
+    min_list = sorted(min_list, key=(lambda x: x[0]), reverse=False)
     print(max_list)
     print(min_list)
     max_arr = np.array(max_list)
