@@ -53,7 +53,7 @@ def cluster1(df: pd.DataFrame, max_size: int = 10):
     '每一类样本数不超过max_size，聚类方式为kmeans+cosine'
     now = 0
     data = df.to_numpy()
-    data = pretreat1(data)
+    data = pretreat2(data)
     res = np.zeros(len(data), dtype=int)
     id = np.arange(len(data), dtype=int)
 
@@ -150,6 +150,5 @@ if __name__ == '__main__':
     info.to_csv(output_path.format('test'))
 
     cluster1_diff_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])
-    cluster2_diff_k(info, [5, 10, 20, 50, 100, 200, 500])
-    
+    # cluster2_diff_k(info, [5, 10, 20, 50, 100, 200, 500])
     
