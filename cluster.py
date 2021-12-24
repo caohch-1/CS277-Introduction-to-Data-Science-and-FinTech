@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from Bio.Cluster import kcluster
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
-from sklearn.decomposition import PCA
 import random
 
 random.seed(0)
@@ -15,7 +14,7 @@ np.random.seed(0)
 prefix = 'data/'
 outputprefix = 'processed_data/'
 path = prefix + '{}.csv'
-img_path = 'image/' + '{}.png'
+img_path = outputprefix + '{}.png'
 output_path = outputprefix + '{}.csv'
 
 def read():
@@ -36,24 +35,11 @@ def read():
     info.index = info.index.map(lambda x : x[0])
     return info
 
-def show(x, label, output_file = None):
-    pca = PCA(n_components=2)
-    pca.fit(x)
-    y = pca.transform(x)
-    plt.scatter(y[:, 0], y[:, 1], marker='.', c = label, s = 2)
-    if output_file is not None:
-        plt.title(output_file)
-        plt.savefig(img_path.format(output_file), dpi=600)
-
-def pretreat1(x: np.ndarray):
-    '标准化'
-    return (x - np.mean(x, axis=0)) / np.std(x, axis=0)
-
 def cluster1(df: pd.DataFrame, max_size: int = 10):
     '每一类样本数不超过max_size，聚类方式为kmeans+cosine'
     now = 0
     data = df.to_numpy()
-    data = pretreat1(data)
+    data = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
     res = np.zeros(len(data), dtype=int)
     id = np.arange(len(data), dtype=int)
 
@@ -75,18 +61,18 @@ def cluster1(df: pd.DataFrame, max_size: int = 10):
             cluster_recursion(x2, id2)
     
     cluster_recursion(data, id)
-    show(data, res, output_file = 'cluster1-' + str(max_size))
     res = pd.DataFrame(res, index=df.index)
-    res.to_csv(output_path.format('cluster1-' + str(max_size)))
     return res
 
 def cluster1_diff_size(info: pd.DataFrame, sizes: list):
     '使用kmeans聚类，sizes为不同类最大样本数的列表'
     for size in sizes:
-        print('cluster with max_size %d' % size)
-        cluster1(info, size)
-        
-def pretreat2(x: np.ndarray):
+        print('cluster with size %d' % size)
+        label = cluster1(info, size)
+        label.to_csv(output_path.format('cluster1-' + str(size)))
+
+def dist_for_cluster2(x, k = 0.5):
+    '综合考虑欧氏距离和余弦相似度，计算两只股票的距离'
     def logize(x):
         '我们认为1亿和10亿；10亿和100亿是比较接近的，所以标准化前先取对数'
         x_sgn = 1 if x >= 0 else -1
@@ -95,14 +81,9 @@ def pretreat2(x: np.ndarray):
     logize_v = vectorize(logize)
     '需要先判断那些是有量纲的。这里的判断依据是多数值大于1万的是有量纲的。'
     is_number = (np.sum(np.abs(x) >= 1e4, axis=0) / len(x)) > 0.5
-    y = x.copy()
-    y.T[is_number] = logize_v(x.T[is_number])
-    x = y
+    x.T[is_number] = logize_v(x.T[is_number])
     x = (x - np.mean(x, axis=0)) / np.std(x, axis=0)
-    return x
-
-def dist_for_cluster2(x: np.ndarray, k = 0.25):
-    '综合考虑欧氏距离和余弦相似度，计算两只股票的距离'
+    
     '距离1使用欧氏距离，距离2使用余弦相似度，两者结合，只有两者都比较接近时，距离较小'
     'd1和d2结合的公式的灵感来自于角点响应函数：R=det(M)-k(trace(M)^2)=(L1*L2)-k(L1+L2)^2'
     '此处d = d1 * d2 + k(d1 + d2)^2'
@@ -115,26 +96,23 @@ def dist_for_cluster2(x: np.ndarray, k = 0.25):
 
 def cluster2(df: pd.DataFrame, k = 5, dist = None):
     '使用层次聚类+自定义距离，k为类个数'
-    data = df.to_numpy()
-    data = pretreat2(data)
     if dist is None:
+        data = df.to_numpy()
         dist = dist_for_cluster2(data)
-
     model = AgglomerativeClustering(n_clusters=k, affinity="precomputed", linkage="average")
     label = model.fit_predict(dist)
-    show(data, label, output_file = 'cluster2-' + str(k))
     res = pd.DataFrame(label, index=df.index)
-    res.to_csv(output_path.format('cluster2-' + str(k)))
     return res
-    
+
 def cluster2_diff_k(info: pd.DataFrame, nums: list):
     '使用层次聚类，nums为聚类个数'
     data = info.to_numpy()
-    data = pretreat2(data)
     dist = dist_for_cluster2(data)
     for k in nums:
-        print('cluster with k %d' % k)
-        cluster2(info, k, dist = dist)
+        print('cluster with size %d' % k)
+        label = cluster2(info, k, dist = dist)
+        label.to_csv(output_path.format('cluster2-' + str(k)))
+
 
 if __name__ == '__main__':
     info = read()
@@ -144,12 +122,11 @@ if __name__ == '__main__':
     现金流量表：自由现金流量
     财务指标：每股净资产，净资产收益率，利润总额同比增长
     '''
-
     info = info[['total_revenue', 'total_cogs', 'total_cur_assets', 'fix_assets_total',
                 'free_cashflow', 'bps', 'roe', 'ebt_yoy']]
     info.to_csv(output_path.format('test'))
+    # cluster1_diff_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])
 
-    cluster1_diff_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])
     cluster2_diff_k(info, [5, 10, 20, 50, 100, 200, 500])
     
     
