@@ -1,11 +1,10 @@
-from platform import dist
 import numpy as np
 from numpy.lib.function_base import vectorize
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from Bio.Cluster import kcluster
-from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
 import random
 
@@ -19,6 +18,7 @@ img_path = outputprefix + '{}.png'
 output_path = outputprefix + '{}.csv'
 
 def read():
+    '读入数据，截取最后4个季度的季报，删除异常点'
     info = pd.read_csv(path.format('pt_info'), index_col=['ts_code'])
     info = info.groupby(info.index)
     def join(x: pd.DataFrame):
@@ -69,7 +69,7 @@ def cluster1_diff_size(info: pd.DataFrame, sizes: list):
     for size in sizes:
         print('cluster with size %d' % size)
         label = cluster1(info, size)
-        label.to_csv(output_path.format('cluster' + str(size)))
+        label.to_csv(output_path.format('cluster1-' + str(size)))
 
 def dist_for_cluster2(x, k = 0.5):
     '综合考虑欧氏距离和余弦相似度，计算两只股票的距离'
@@ -79,15 +79,15 @@ def dist_for_cluster2(x, k = 0.5):
         x_abs = max(abs(x), 1)
         return np.math.log(x_abs) * x_sgn
     logize_v = vectorize(logize)
-    '需要先判断那些是有量纲的。多数值大于1万的是数值。'
+    '需要先判断那些是有量纲的。这里的判断依据是多数值大于1万的是有量纲的。'
     is_number = (np.sum(np.abs(x) >= 1e4, axis=0) / len(x)) > 0.5
     x.T[is_number] = logize_v(x.T[is_number])
     x = (x - np.mean(x, axis=0)) / np.std(x, axis=0)
     
     '距离1使用欧氏距离，距离2使用余弦相似度，两者结合，只有两者都比较接近时，距离较小'
-    'd1和d2结合的公式的灵感来自于角点响应函数：R=det(M)-k(trace(M)^2)=(L1*L2)-k(x1+x2)^2'
+    'd1和d2结合的公式的灵感来自于角点响应函数：R=det(M)-k(trace(M)^2)=(L1*L2)-k(L1+L2)^2'
     '此处d = d1 * d2 + k(d1 + d2)^2'
-    'd1为欧拉距离归一化到[0,2]，d2为余弦相似度，范围也为[0,2]'
+    'd1为欧氏距离，归一化到[0,2]，d2为余弦相似度，范围也为[0,2]'
     d1 = pairwise_distances(x, x, metric = 'euclidean')
     d1 = 2 * d1 / np.max(d1)
     d2 = pairwise_distances(x, x, metric = 'cosine')
@@ -96,20 +96,22 @@ def dist_for_cluster2(x, k = 0.5):
 
 def cluster2(df: pd.DataFrame, k = 5, dist = None):
     '使用层次聚类+自定义距离，k为类个数'
-    data = df.to_numpy()
     if dist is None:
+        data = df.to_numpy()
         dist = dist_for_cluster2(data)
-    # !not finished now
-    pass
+    model = AgglomerativeClustering(n_clusters=k, affinity="precomputed", linkage="average")
+    label = model.fit_predict(dist)
+    res = pd.DataFrame(label, index=df.index)
+    return res
 
 def cluster2_diff_k(info: pd.DataFrame, nums: list):
-    '使用层次聚类，nums为不同类个数的列表'
+    '使用层次聚类，nums为聚类个数'
     data = info.to_numpy()
     dist = dist_for_cluster2(data)
     for k in nums:
         print('cluster with size %d' % k)
         label = cluster2(info, k, dist = dist)
-        label.to_csv(output_path.format('cluster' + str(k)))
+        label.to_csv(output_path.format('cluster2-' + str(k)))
 
 
 if __name__ == '__main__':
@@ -125,7 +127,6 @@ if __name__ == '__main__':
     info.to_csv(output_path.format('test'))
     # cluster1_diff_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])
 
-    # x = info.to_numpy()
-    # dist_for_cluster2(x)
+    cluster2_diff_k(info, [5, 10, 20, 50, 100, 200, 500])
     
     
