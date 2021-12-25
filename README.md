@@ -75,7 +75,7 @@ We use a simple Long short-term memory based deep learning model as the backbone
 - Usage
 
 ```
-python ...
+python predictor.py
 ```
 
 
@@ -91,7 +91,7 @@ Introduction here ...
 - Usage
 
 ```
-python predictor.py
+python ...
 ```
 
 
