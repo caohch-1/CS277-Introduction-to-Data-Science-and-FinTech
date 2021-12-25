@@ -40,13 +40,14 @@ def read():
 
 def show(x, label, output_file = None):
     rng = np.random.RandomState(0)
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=8)
     pca.fit(x)
     y = pca.transform(x)
-    plt.ylim((-5, 5))
-    plt.xticks([])  # 去掉x轴
-    plt.yticks([])  # 去掉y轴
-    plt.axis('off')  # 去掉坐标轴
+    plt.xlim((-4, 4))
+    plt.ylim((-3, 3))
+    # plt.xticks([])  # 去掉x轴
+    # plt.yticks([])  # 去掉y轴
+    # plt.axis('off')  # 去掉坐标轴
     # sizes = x * rng.rand(50)  # 随机产生50个用于改变散点面积的数值
     plt.scatter(y[:, 0], y[:, 1], marker='.', c=label, s=1)
     if output_file is not None:
@@ -102,11 +103,12 @@ def pretreat2(x: np.ndarray):
         return np.math.log(x_abs) * x_sgn
     logize_v = vectorize(logize)
     '此处对多数值超过10的因子取对数'
-    is_number = (np.sum(np.abs(x) >= 10, axis=0) / len(x)) > 0.5
+    is_number = (np.sum(np.abs(x) >= 10, axis=0) / len(x)) > -0.1
     y = x.copy()
     y.T[is_number] = logize_v(x.T[is_number])
     x = y
     x = (x - np.mean(x, axis=0)) / np.std(x, axis=0)
+
     return x
 
 def dist_for_cluster2(x: np.ndarray, k = 0.25):
@@ -207,9 +209,13 @@ if __name__ == '__main__':
     # info = info[['total_revenue', 'free_cashflow', 'roe', 'total_cogs', \
         # 'total_cur_assets', 'fix_assets_total' , 'bps', 'ebt_yoy']]
     
-    info = factor_selection(info, from_file=True)
+    info = factor_selection(info, from_file=False)
     
-    info.to_csv(output_path.format('test'))
+    x = info.to_numpy()
+    x = pretreat2(x)
+    y = pd.DataFrame(x, index=info.index, columns=info.columns)
+
+    y.to_csv(output_path.format('test'))
     
     # x = info.to_numpy()
     # x = pretreat2(x)
