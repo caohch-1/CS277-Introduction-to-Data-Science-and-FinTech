@@ -45,8 +45,8 @@ def show(x, label, output_file = None):
     y = pca.transform(x)
     plt.xlim((-4, 4))
     plt.ylim((-3, 3))
-    # plt.xticks([])  # 去掉x轴
-    # plt.yticks([])  # 去掉y轴
+    plt.xticks([])  # 去掉x轴
+    plt.yticks([])  # 去掉y轴
     # plt.axis('off')  # 去掉坐标轴
     # sizes = x * rng.rand(50)  # 随机产生50个用于改变散点面积的数值
     plt.scatter(y[:, 0], y[:, 1], marker='.', c=label, s=1)
@@ -84,7 +84,7 @@ def cluster1(df: pd.DataFrame, max_size: int = 10):
             cluster_recursion(x2, id2)
     
     cluster_recursion(data, id)
-    show(data, res, output_file = 'cluster1-' + str(max_size))
+    show(data, res, output_file = 'K Means, Max Size: ' + str(max_size))
     res = pd.DataFrame(res, index=df.index)
     res.to_csv(output_path.format('cluster1-' + str(max_size)))
     return res
@@ -132,7 +132,7 @@ def cluster2(df: pd.DataFrame, k = 5, dist = None):
 
     model = AgglomerativeClustering(n_clusters=k, affinity="precomputed", linkage="average")
     label = model.fit_predict(dist)
-    show(data, label, output_file = 'cluster2-' + str(k))
+    show(data, label, output_file = 'Hierarchical, Cluster Numbers: ' + str(k))
     res = pd.DataFrame(label, index=df.index)
     res.to_csv(output_path.format('cluster2-' + str(k)))
     return res
