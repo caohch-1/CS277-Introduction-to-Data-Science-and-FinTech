@@ -4,7 +4,7 @@ The code for project "Standing on the Shoulders of Long-Term: Short-Term Stock P
 
 ## Introduction
 
-With the help of the development of deep learning technology, stock price prediction is becoming one of the most popular research directions. A lot of efforts are invested into short-term or long-term data in the previous research, but no one has tried to combine short-term and long-term data together to design an investment strategy. We propose a pipeline that utilizes both long-term and short-term data to output an investing strategy. We also conducted a simple simulated trading experiment, and the results show that the rate of return (ROR) of our method reached $?\%$ \TBD@yangzy.
+With the help of the development of deep learning technology, stock price prediction is becoming one of the most popular research directions. A lot of efforts are invested into short-term or long-term data in the previous research, but no one has tried to combine short-term and long-term data together to design an investment strategy. We propose a pipeline that utilizes both long-term and short-term data to output an investing strategy. We also conducted a simple simulated trading experiment, and the results show that the rate of return (ROR) of our method reached 122.214%.
 
 ### **What task does our code (method) solve?**
 
