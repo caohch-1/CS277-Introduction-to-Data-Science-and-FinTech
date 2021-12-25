@@ -40,7 +40,7 @@ def read():
 
 def show(x, label, output_file = None):
     rng = np.random.RandomState(0)
-    pca = PCA(n_components=8)
+    pca = PCA(n_components=2)
     pca.fit(x)
     y = pca.transform(x)
     plt.xlim((-4, 4))
