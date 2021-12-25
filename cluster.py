@@ -101,8 +101,8 @@ def pretreat2(x: np.ndarray):
         x_abs = max(abs(x), 1)
         return np.math.log(x_abs) * x_sgn
     logize_v = vectorize(logize)
-    '此处对所有值都取对数'
-    is_number = (np.sum(np.abs(x) >= 100, axis=0) / len(x)) > 0.5
+    '此处对多数值超过10的因子取对数'
+    is_number = (np.sum(np.abs(x) >= 10, axis=0) / len(x)) > 0.5
     y = x.copy()
     y.T[is_number] = logize_v(x.T[is_number])
     x = y
@@ -211,13 +211,13 @@ if __name__ == '__main__':
     
     info.to_csv(output_path.format('test'))
     
-    x = info.to_numpy()
-    x = pretreat2(x)
-    y = pd.DataFrame(x, index=info.index, columns=info.columns)
-    print(y.corr())
-    pca = PCA(n_components=0.9)
-    pca.fit(x)
-    print(pca.explained_variance_ratio_)
+    # x = info.to_numpy()
+    # x = pretreat2(x)
+    # y = pd.DataFrame(x, index=info.index, columns=info.columns)
+    # print(y.corr())
+    # pca = PCA(n_components=0.9)
+    # pca.fit(x)
+    # print(pca.explained_variance_ratio_)
 
     '#! 特别注意，聚类一传入的是聚类后每一类最大样本数size，聚类二传入的是聚类后类的个数k'
     cluster1_diff_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])

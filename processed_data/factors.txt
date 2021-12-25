@@ -1,1 +1,1 @@
-['total_revenue', 'free_cashflow', 'roe', 'ar_turn', 'fa_turn', 'expense_of_sales', 'dt_netprofit_yoy', 'ocf_yoy']
+['total_revenue', 'free_cashflow', 'roe', 'ar_turn', 'fa_turn', 'ebit_ps', 'netprofit_margin', 'bps_yoy']
