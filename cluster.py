@@ -101,8 +101,8 @@ def pretreat2(x: np.ndarray):
         x_abs = max(abs(x), 1)
         return np.math.log(x_abs) * x_sgn
     logize_v = vectorize(logize)
-    '需要先判断那些是有量纲的。这里的判断依据是多数值大于1万的是有量纲的。'
-    is_number = (np.sum(np.abs(x) >= 1e4, axis=0) / len(x)) > 0.5
+    '此处对所有值都取对数'
+    is_number = (np.sum(np.abs(x) >= 100, axis=0) / len(x)) > -1
     y = x.copy()
     y.T[is_number] = logize_v(x.T[is_number])
     x = y
