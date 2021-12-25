@@ -68,9 +68,10 @@ python PLRperiodic.py
 We use a simple Long short-term memory based deep learning model as the backbone of short-term analysis. Its input is the closing price of the past twenty trading days, and its output is the predicted closing price of the next trading day. Based on the clustering results obtained from the Long-term Analysis,we train an LSTM model for each cluster. Long-term Analysis ensures that the stocks in each cluster have similar characteristics and potential connections, which can help the model improve its predicting performance.
 
 - The Input
-  - ...
+  - The stock price data
+  - The clustering result from Long-term Analyzer
 - The Output
-  - ...
+  - Models for predicting stock prices
 - Usage
 
 ```
@@ -90,7 +91,7 @@ Introduction here ...
 - Usage
 
 ```
-python ...
+python predictor.py
 ```
 
 
