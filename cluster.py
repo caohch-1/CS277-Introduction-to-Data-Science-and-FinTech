@@ -103,7 +103,7 @@ def pretreat2(x: np.ndarray):
         return np.math.log(x_abs) * x_sgn
     logize_v = vectorize(logize)
     '此处对多数值超过10的因子取对数'
-    is_number = (np.sum(np.abs(x) >= 10, axis=0) / len(x)) > -0.1
+    is_number = (np.sum(np.abs(x) >= 1, axis=0) / len(x)) > 0.5
     y = x.copy()
     y.T[is_number] = logize_v(x.T[is_number])
     x = y
@@ -209,7 +209,7 @@ if __name__ == '__main__':
     # info = info[['total_revenue', 'free_cashflow', 'roe', 'total_cogs', \
         # 'total_cur_assets', 'fix_assets_total' , 'bps', 'ebt_yoy']]
     
-    info = factor_selection(info, from_file=False)
+    info = factor_selection(info, from_file=True)
     
     x = info.to_numpy()
     x = pretreat2(x)
