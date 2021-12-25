@@ -9,6 +9,8 @@ from sklearn.metrics import pairwise_distances
 from sklearn.decomposition import PCA
 import random
 
+from numpy.ma.core import sort
+
 random.seed(0)
 np.random.seed(0)
 
@@ -37,13 +39,19 @@ def read():
     return info
 
 def show(x, label, output_file = None):
+    rng = np.random.RandomState(0)
     pca = PCA(n_components=2)
     pca.fit(x)
     y = pca.transform(x)
-    plt.scatter(y[:, 0], y[:, 1], marker='.', c = label, s = 2)
+    plt.ylim((-5, 5))
+    plt.xticks([])  # 去掉x轴
+    plt.yticks([])  # 去掉y轴
+    plt.axis('off')  # 去掉坐标轴
+    # sizes = x * rng.rand(50)  # 随机产生50个用于改变散点面积的数值
+    plt.scatter(y[:, 0], y[:, 1], marker='.', c=label, s=1)
     if output_file is not None:
         plt.title(output_file)
-        plt.savefig(img_path.format(output_file), dpi=600)
+        plt.savefig(img_path.format(output_file.replace(':', ' ')), dpi=600)
 
 def pretreat1(x: np.ndarray):
     '标准化'
@@ -136,19 +144,82 @@ def cluster2_diff_k(info: pd.DataFrame, nums: list):
         print('cluster with k %d' % k)
         cluster2(info, k, dist = dist)
 
+def factor_selection(df: pd.DataFrame, from_file = False):
+    '筛选因子，不断在相关系数最小的2个因子里删除，如果已经筛选过并保存到文件，更改from_file=True'
+    if from_file:
+        with open(outputprefix + 'factors.txt', 'r') as f:
+            factors = f.readline()
+            return df[eval(factors)]
+    df.drop('comp_type', axis=1, inplace=True)
+    pre_select = df[['total_revenue', 'free_cashflow', 'roe']]
+    df.drop(['total_revenue', 'free_cashflow', 'roe'], axis=1, inplace=True)
+    df = pd.concat([pre_select, df], axis=1)
+    x = df.to_numpy()
+    x = pretreat2(x)
+    y = pd.DataFrame(x, index=df.index, columns=df.columns)
+    corr_df = np.abs(y.corr())
+    corr_np = corr_df.to_numpy()
+
+    size = len(corr_np)
+    corr_l = list()
+    removed = dict()
+    for i in range(size):
+        for j in range(i + 1, size):
+            corr_l.append((i, j, corr_np[i][j]))
+    corr_l.sort(key = lambda x: x[2], reverse=True)
+    for i, j, corr in corr_l:
+        if corr <= 0.8: break
+        if i in removed or j in removed: continue
+        removed[j] = 1
+    rest = []
+    mp = {}
+    for i in range(size):
+        if i not in removed:
+            mp[len(rest)] = i
+            rest.append(df.columns[i])
+
+    size = len(rest)
+    new_corr = [[0.0 for j in range(size)] for i in range(size)]
+    for i in range(size):
+        for j in range(size):
+            new_corr[i][j] = corr_np[mp[i]][mp[j]]
+    new_corr = np.array(new_corr)
+    from itertools import combinations
+    best = None
+    min_now = 1e9
+    for comb in combinations(range(3, size), 5):
+        comb = [0, 1, 2] + list(comb)
+        i, j = zip(*combinations(comb, 2))
+        s = np.sum(new_corr[i, j])
+        if s < min_now:
+            min_now = s
+            best = comb
+
+    factors = [rest[i] for i in best]
+    with open(outputprefix + 'factors.txt', 'w') as f:
+        f.write(str(factors))
+    df = df[factors]
+    return df
+
 if __name__ == '__main__':
     info = read()
-    '''
-    利润表：营业总收入，营业总成本
-    资产负债表：流动资产合计，固定资产合计
-    现金流量表：自由现金流量
-    财务指标：每股净资产，净资产收益率，利润总额同比增长
-    '''
 
-    info = info[['total_revenue', 'total_cogs', 'total_cur_assets', 'fix_assets_total',
-                'free_cashflow', 'bps', 'roe', 'ebt_yoy']]
+    # info = info[['total_revenue', 'free_cashflow', 'roe', 'total_cogs', \
+    #     'total_cur_assets', 'fix_assets_total' , 'bps', 'ebt_yoy']]
+    
+    info = factor_selection(info, from_file=True)
+    
     info.to_csv(output_path.format('test'))
+    
+    # x = info.to_numpy()
+    # x = pretreat2(x)
+    # y = pd.DataFrame(x, index=info.index, columns=info.columns)
+    # print(y.corr())
+    # pca = PCA(n_components=0.9)
+    # pca.fit(x)
+    # print(pca.explained_variance_ratio_)
 
+    '#! 特别注意，聚类一传入的是聚类后每一类最大样本数size，聚类二传入的是聚类后类的个数k'
     cluster1_diff_size(info, sizes = [5, 10, 20, 50, 100, 200, 500])
-    # cluster2_diff_k(info, [5, 10, 20, 50, 100, 200, 500])
+    cluster2_diff_k(info, [5, 10, 20, 50, 100, 200, 500])
     
