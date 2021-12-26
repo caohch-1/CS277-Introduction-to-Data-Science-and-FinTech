@@ -15,14 +15,16 @@ We propose a pipeline that utilizes the combination of the long-term (i.e., fina
 ```
 |--SSLT/
 |   |--data/
-|      |--price.csv      /* Files contain stock price data
-|      |--pt_info.csv      /* Files contain financial report data
-|      |--...      /* Files contain ...
-|   |--processed_data/      /* Directory for processed data
-|   |--cluster.py        /* Files for ...
-|   |--PLRperiodic.py      /* Files for PLR Periodicity Evaluation
-|   |--predictor.py      /*Files for price prediction based on clustering
-|   |--read.py      /*Files for ...
+|      |--price.csv 		/* Files contain stock price data
+|      |--pt_info.csv 		/* Files contain financial report data
+|      |--pt_price.csv 		/* Files contain preprocessed data
+|	   |--symbol.csv 		/* Files contain stock code, name and section
+|	   |--*表.csv 			/* Financial reports
+|   |--processed_data/ 		/* Directory for processed data
+|   |--cluster.py 			/* Files for ...
+|   |--PLRperiodic.py 		/* Files for PLR Periodicity Evaluation
+|   |--predictor.py 		/*Files for price prediction based on clustering
+|   |--read.py 				/*Files for getting raw dataset and preprocessing
 ```
 
 
@@ -32,13 +34,13 @@ We propose a pipeline that utilizes the combination of the long-term (i.e., fina
 Here we provide the code for clustering the stocks based on the financial report data.
 
 - The code contains two parts:
-  - The Kmeans Clustering
-  - The Hierarchical Clustering
+  - The K-means Clustering + Cosine Distance
+  - The Hierarchical Clustering + Self-defined Distance
 
 - The Input
   - The financial report data
 - The Output
-  - ...
+  - Stock cluster categories
 - Usage
 
 ```
