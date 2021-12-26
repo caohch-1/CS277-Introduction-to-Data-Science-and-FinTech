@@ -18,8 +18,8 @@ We propose a pipeline that utilizes the combination of the long-term (i.e., fina
 |      |--price.csv 		/* Files contain stock price data
 |      |--pt_info.csv 		/* Files contain financial report data
 |      |--pt_price.csv 		/* Files contain preprocessed data
-|	   |--symbol.csv 		/* Files contain stock code, name and section
-|	   |--*表.csv 			/* Financial reports
+|      |--symbol.csv 		/* Files contain stock code, name and section
+|      |--*表.csv 			/* Financial reports
 |   |--processed_data/ 		/* Directory for processed data
 |   |--cluster.py 			/* Files for ...
 |   |--PLRperiodic.py 		/* Files for PLR Periodicity Evaluation
