@@ -82,16 +82,18 @@ python predictor.py
 
 ### Strategy Generator
 
-Introduction here ...
+We use the prediction result from models and the periodic information to generate investment strategies. The strategies are based on the Regression idea. We classify the predicted change into three categories: positive, negative, and partial. The positive and negative categories are only based on the predicted change, if the predicted change is significant enough, we will only consider the shift direction of the change and we will buy as many sharesas possible with our current funds. 
+If the predicted change is not that significant, i.e. partial, we will adjust how certain we are about the prediction results based on periodic information. In this situation we will buy shares with a certain ratio of the current funds.
 
 - The Input
-  - ...
+  - The predicted stock prices from models above
+  - The periodicity result from Periodicity Analyzer
 - The Output
-  - ...
+  - A strategy for investing based on price prediction and the periodicity result
 - Usage
 
 ```
-python ...
+python strategy.py
 ```
 
 
