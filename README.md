@@ -25,6 +25,7 @@ We propose a pipeline that utilizes the combination of the long-term (i.e., fina
 |   |--PLRperiodic.py 		/* Files for PLR Periodicity Evaluation
 |   |--predictor.py 		/*Files for price prediction based on clustering
 |   |--read.py 				/*Files for getting raw dataset and preprocessing
+|   |--strategy.py   /*Files for generate strategy and do evaluate simulation
 ```
 
 
