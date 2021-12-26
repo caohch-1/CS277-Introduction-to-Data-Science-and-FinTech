@@ -1,1 +1,0 @@
-['total_revenue', 'free_cashflow', 'roe', 'capital_rese_ps', 'ocfps', 'ebit_ps', 'currentdebt_to_debt', 'debt_to_eqt']
