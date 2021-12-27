@@ -20,13 +20,13 @@ We propose a pipeline that utilizes the combination of the long-term (i.e., fina
 |      |--pt_price.csv 		/* Files contain preprocessed data
 |      |--symbol.csv 		/* Files contain stock code, name and section
 |      |--*表.csv 			/* Financial reports
-|      |--财务指标.csv 		 /* Financial indicator
+|      |--财务指标.csv      /* Financial indicator
 |   |--processed_data/ 		/* Directory for processed data
 |   |--cluster.py 			/* Files for clustering stocks
 |   |--PLRperiodic.py 		/* Files for PLR Periodicity Evaluation
 |   |--predictor.py 		/*Files for price prediction based on clustering
 |   |--read.py 				/*Files for getting raw dataset and preprocessing
-|   |--strategy.py   /*Files for generate strategy and do evaluate simulation
+|   |--strategy.py      /*Files for generate strategy and do evaluate simulation
 ```
 
 We have upload the data sample. If you want to get the complete experiment results， please download the data from https://pan.baidu.com/s/1Au9-eJruJcWJ77tz-mV9BA with extraction code: 8jx3
