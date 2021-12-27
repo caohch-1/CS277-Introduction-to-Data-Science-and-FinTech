@@ -4,7 +4,7 @@ The code for project "Standing on the Shoulders of Long-Term: Short-Term Stock P
 
 ## Introduction
 
-With the help of the development of deep learning technology, stock price prediction is becoming one of the most popular research directions. A lot of efforts are invested into short-term or long-term data in the previous research, but no one has tried to combine short-term and long-term data together to design an investment strategy. We propose a pipeline that utilizes both long-term and short-term data to output an investing strategy. We also conducted a simple simulated trading experiment, and the results show that the rate of return (ROR) of our method reached 112.56%.
+With the help of the development of deep learning technology, stock price prediction is becoming one of the most popular research directions. A lot of efforts are invested into short-term or long-term data in the previous research, but no one has tried to combine short-term and long-term data together to design an investment strategy. We propose a pipeline that utilizes both long-term and short-term data to output an investing strategy. We also conducted a simple simulated trading experiment, and the results show that the rate of return (ROR) of our method reached 12.56%.
 
 ### **What task does our code (method) solve?**
 
@@ -104,4 +104,4 @@ python strategy.py
 
 ## Conclusion
 
-We design and implement a stock price forecasting system that utilizes both long-term and short-term data and further generate investment strategies. Experiments on the dataset containing 3192 stock information shows that our pipeline can achieve a ROR of 112.56%. We have also conducted analysis and experiments including clustering algorithms and periodicity search methods. Limited by time and computing resources, we cannot further explore how to embed more complex deep learning techniques into our pipeline to achieve better performance, but our results prove that the combination of long-term data and short-term data to predict stock prices and generate investment strategies is feasible and effective.
+We design and implement a stock price forecasting system that utilizes both long-term and short-term data and further generate investment strategies. Experiments on the dataset containing 3192 stock information shows that our pipeline can achieve a ROR of 12.56%. We have also conducted analysis and experiments including clustering algorithms and periodicity search methods. Limited by time and computing resources, we cannot further explore how to embed more complex deep learning techniques into our pipeline to achieve better performance, but our results prove that the combination of long-term data and short-term data to predict stock prices and generate investment strategies is feasible and effective.
