@@ -1,6 +1,6 @@
 # SSLT
 
-The code for project "Standing on the Shoulders of Long-Term: Short-Term Stock Prediction Based on Financial Report and Quotations" in CS277, STU.
+The code for project "Standing on the Shoulders of Long-Term: Short-Term Stock Prediction Based on Financial Report and Quotations" in CS277, ShanghaiTech.
 
 ## Introduction
 
