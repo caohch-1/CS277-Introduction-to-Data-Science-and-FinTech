@@ -29,7 +29,7 @@ We propose a pipeline that utilizes the combination of the long-term (i.e., fina
 |   |--strategy.py      /*Files for generate strategy and do evaluate simulation
 ```
 
-We have upload the data sample. If you want to get the complete experiment results， please download the data from https://pan.baidu.com/s/1Au9-eJruJcWJ77tz-mV9BA with extraction code: 8jx3
+Followed by the privacy rule, the raw data is currently withdrawn.
 
 ### Clustering
 
